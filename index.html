@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Guess Who – PS Activity</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; line-height: 1.55; margin: 0; padding: 24px; color: #111; background: #fff; }
+    main { max-width: 900px; margin: 0 auto; }
+    h1 { font-size: 1.5rem; margin: 0 0 12px; }
+    p { margin: 0 0 12px; }
+    .examples { background: #f6f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px 14px; margin: 12px 0 16px; }
+    .examples ul { margin: 8px 0 0; padding-left: 18px; }
+    .appearances { display: flex; gap: 24px; align-items: flex-start; margin-top: 8px; }
+    .appearances ul { margin: 0; padding-left: 18px; flex: 1; }
+    .appearances li { margin: 4px 0; }
+    .board { flex: 0 0 40%; max-width: 40%; }
+    .board img { width: 100%; height: auto; display: block; border: 1px solid #e5e7eb; border-radius: 8px; }
+    .hint { font-style: italic; color: #374151; margin-top: 8px; }
+    @media (max-width: 720px) {
+      .appearances { flex-direction: column; }
+      .board { max-width: 100%; flex-basis: auto; }
+    }
+    
+    /* Calculator styles */
+    .calc-table { width: 100%; margin-top: 20px; border-collapse: collapse; }
+    .calc-table td { vertical-align: top; padding: 10px; }
+    .notes-cell { width: 60%; }
+    .calc-cell { width: 40%; text-align: center; }
+    
+    #notes { width: 100%; height: 200px; padding: 8px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 14px; font-family: inherit; resize: vertical; box-sizing: border-box; }
+    #notes:focus { outline: none; border-color: #4f46e5; }
+    
+    .calculator { display: inline-block; background: #fafafa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; }
+    .display { background: #fff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; margin-bottom: 8px; text-align: right; min-height: 40px; }
+    #expression { font-size: 12px; color: #666; min-height: 16px; margin-bottom: 4px; }
+    #result { font-size: 20px; font-weight: bold; color: #333; }
+    
+    .buttons { display: grid; grid-template-columns: repeat(4, 50px); gap: 6px; }
+    .calculator button { height: 42px; border: 1px solid #e5e7eb; border-radius: 6px; background: white; font-size: 16px; cursor: pointer; }
+    .calculator button:hover { background: #f0f0f0; }
+    .calculator button:active { transform: scale(0.95); }
+    .btn-operator { background: #f5f5f5; color: #4f46e5; font-weight: 600; }
+    .btn-equals { background: #4f46e5; color: white; font-weight: 600; }
+    .btn-equals:hover { background: #4338ca; }
+    .btn-function { background: #fef3c7; font-size: 13px; }
+    .btn-clear { background: #fee; color: #c00; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Problem-Solving (PS) Introduction</h1>
+
+    <p>As most of you are familiar with the board game <em>Guess Who</em>, today we're going to explore a slightly modified version of it.</p>
+
+    <p>Suppose you are playing with another person who has the same board in front of them as you do. Each of you chooses an animal from the board and the other tries to guess the animal chosen by asking <strong>YES/NO</strong> questions.</p>
+
+    <p>Be aware that some animals can appear <strong>multiple times</strong>, and you may group several different animals together in one question. However, you <strong>cannot</strong> ask questions that refer to abstract properties or affect multiple groups of animals at the same time.</p>
+
+    <div class="examples" aria-label="Examples of allowed and not allowed questions">
+      <strong>Examples:</strong>
+      <ul>
+        <li>✔️ "Is it a <em>Dog</em> OR a <em>Cat</em>?"</li>
+        <li>❌ "Is it a mammal?"</li>
+      </ul>
+    </div>
+
+    <h2 style="font-size:1.2rem; margin:16px 0 8px;">Given these appearances:</h2>
+    <div class="appearances">
+      <ul>
+        <li><strong>8</strong> Dogs</li>
+        <li><strong>4</strong> Cats</li>
+        <li><strong>4</strong> Tigers</li>
+        <li><strong>4</strong> Lions</li>
+        <li><strong>4</strong> Elephants</li>
+        <li><strong>2</strong> Sharks</li>
+        <li><strong>2</strong> Zebras</li>
+        <li><strong>2</strong> Eagles</li>
+        <li><strong>1</strong> Frog</li>
+        <li><strong>1</strong> Snake</li>
+      </ul>
+
+      <figure class="board">
+        <img src="img.png" alt="Guess Who board with animals; some appear multiple times." width="00px" height="auto"/>
+        <figcaption style="font-size:.9rem; color:#6b7280; margin-top:6px;"></figcaption>
+      </figure>
+    </div>
+
+    <p style="margin-top:16px;">Think carefully how to group the animals, and <strong>estimate the average number of YES/NO questions</strong> needed to find the animal, <strong>assuming you ask optimally</strong>.</p>
+    <p class="hint">(Hint: consider animal occurrence probabilities.)</p>
+
+    <table class="calc-table">
+      <tr>
+        <td class="notes-cell">
+          <p><strong>Notes:</strong></p>
+          <textarea id="notes" placeholder="Type your notes here..."></textarea>
+        </td>
+        
+        <td class="calc-cell">
+          <div class="calculator">
+            <div class="display">
+              <div id="expression">0</div>
+              <div id="result">0</div>
+            </div>
+            
+            <div class="buttons">
+              <button class="btn-clear" onclick="clearAll()">AC</button>
+              <button onclick="backspace()">⌫</button>
+              <button class="btn-function" onclick="insertLog2()">log₂</button>
+              <button class="btn-operator" onclick="append('÷')">÷</button>
+              
+              <button onclick="append('7')">7</button>
+              <button onclick="append('8')">8</button>
+              <button onclick="append('9')">9</button>
+              <button class="btn-operator" onclick="append('×')">×</button>
+              
+              <button onclick="append('4')">4</button>
+              <button onclick="append('5')">5</button>
+              <button onclick="append('6')">6</button>
+              <button class="btn-operator" onclick="append('−')">−</button>
+              
+              <button onclick="append('1')">1</button>
+              <button onclick="append('2')">2</button>
+              <button onclick="append('3')">3</button>
+              <button class="btn-operator" onclick="append('+')">+</button>
+              
+              <button onclick="append('0')" style="grid-column: span 2;">0</button>
+              <button onclick="append('.')">.</button>
+              <button class="btn-equals" onclick="calculate()">=</button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <script>
+      const exprEl = document.getElementById('expression');
+      const resEl = document.getElementById('result');
+      let expr = '0';
+      let lastWasEquals = false;
+
+      function updateDisplay() {
+        exprEl.textContent = expr || '0';
+        const preview = evaluate(expr, false);
+        if (preview !== null) {
+          resEl.textContent = preview;
+        }
+      }
+
+      function append(char) {
+        if (lastWasEquals && /[0-9.]/.test(char)) {
+          expr = char;
+          lastWasEquals = false;
+        } else if (expr === '0' && /[0-9]/.test(char)) {
+          expr = char;
+        } else {
+          expr += char;
+        }
+        updateDisplay();
+      }
+
+      function insertLog2() {
+        if (lastWasEquals) {
+          expr = 'log2(' + expr + ')';
+          lastWasEquals = false;
+        } else {
+          expr += 'log2(';
+        }
+        updateDisplay();
+      }
+
+      function clearAll() {
+        expr = '0';
+        lastWasEquals = false;
+        exprEl.textContent = '0';
+        resEl.textContent = '0';
+      }
+
+      function backspace() {
+        if (expr.length <= 1) {
+          expr = '0';
+        } else {
+          expr = expr.slice(0, -1);
+        }
+        updateDisplay();
+      }
+
+      function calculate() {
+        const result = evaluate(expr, true);
+        if (result !== null) {
+          expr = String(result);
+          resEl.textContent = result;
+          exprEl.textContent = result;
+          lastWasEquals = true;
+        } else {
+          resEl.textContent = 'Error';
+        }
+      }
+
+      function evaluate(expression, showError) {
+        try {
+          // Handle log2 by converting to Math.log
+          let e = expression
+            .replace(/×/g, '*')
+            .replace(/÷/g, '/')
+            .replace(/−/g, '-');
+          
+          // Convert log2(x) to Math.log(x)/Math.log(2)
+          // Handle nested parentheses properly
+          while (e.includes('log2(')) {
+            e = e.replace(/log2\(([^()]+)\)/g, '(Math.log($1)/Math.log(2))');
+          }
+
+          // Validate expression
+          const cleanE = e.replace(/Math\.log/g, '').replace(/\s/g, '');
+          if (!/^[0-9+\-*/(). ]+$/.test(cleanE)) {
+            return showError ? null : null;
+          }
+
+          const result = Function('"use strict"; return (' + e + ');')();
+          
+          if (!isFinite(result)) {
+            return null;
+          }
+
+          return Math.round((result + Number.EPSILON) * 1000000000) / 1000000000;
+        } catch (err) {
+          return null;
+        }
+      }
+    </script>
+  </main>
+</body>
+</html>
