@@ -123,8 +123,21 @@
         }
         
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
+        }
+        
+        .game-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 24px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 900px) {
+            .game-layout {
+                grid-template-columns: 1fr;
+            }
         }
         
         .intro {
@@ -190,21 +203,20 @@
             background: #f9fafb;
             border: 1px solid #e5e7eb;
             border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 16px;
         }
         
         .animal-grid {
             display: grid;
             grid-template-columns: repeat(8, 1fr);
-            gap: 12px;
+            gap: 8px;
         }
         
         .animal-card {
             background: white;
             border: 2px solid #d1d5db;
             border-radius: 4px;
-            padding: 8px;
+            padding: 6px;
             cursor: pointer;
             transition: all 0.15s;
             aspect-ratio: 1;
@@ -231,14 +243,14 @@
         }
         
         .animal-emoji {
-            font-size: 1.8em;
+            font-size: 1.4em;
             line-height: 1;
         }
         
         .animal-name {
-            font-size: 0.65em;
+            font-size: 0.55em;
             color: #374151;
-            margin-top: 4px;
+            margin-top: 3px;
             font-weight: 500;
             text-align: center;
         }
@@ -247,7 +259,10 @@
             background: white;
             border: 1px solid #e5e7eb;
             border-radius: 8px;
-            padding: 20px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
         
         .question-display {
@@ -255,9 +270,8 @@
             border: 1px solid #e5e7eb;
             border-radius: 4px;
             padding: 16px;
-            min-height: 60px;
-            margin-bottom: 16px;
-            font-size: 1rem;
+            min-height: 80px;
+            font-size: 0.95rem;
             color: #111;
             display: flex;
             align-items: center;
@@ -266,15 +280,14 @@
         }
         
         .button-group {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
         
         button {
-            padding: 12px 16px;
-            font-size: 0.95rem;
+            padding: 10px 14px;
+            font-size: 0.9rem;
             border: 1px solid #d1d5db;
             border-radius: 4px;
             cursor: pointer;
@@ -313,8 +326,8 @@
             background: #f6f8fa;
             border: 1px solid #e5e7eb;
             border-radius: 4px;
-            padding: 14px;
-            font-size: 0.95rem;
+            padding: 12px;
+            font-size: 0.9rem;
             color: #374151;
         }
         
@@ -339,10 +352,6 @@
         @media (max-width: 600px) {
             .animal-grid {
                 grid-template-columns: repeat(4, 1fr);
-            }
-            
-            .button-group {
-                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -401,22 +410,24 @@
             </div>
         </div>
         
-        <div class="game-board">
-            <div class="animal-grid" id="animalGrid"></div>
-        </div>
-        
-        <div class="controls">
-            <div class="question-display" id="questionDisplay">
-                Select animals to ask a question
+        <div class="game-layout">
+            <div class="game-board">
+                <div class="animal-grid" id="animalGrid"></div>
             </div>
             
-            <div class="button-group">
-                <button class="submit-btn" id="submitBtn" disabled>Submit Question</button>
-                <button id="clearBtn">Clear</button>
-                <button id="resetBtn">New Game</button>
+            <div class="controls">
+                <div class="question-display" id="questionDisplay">
+                    Select animals to ask a question
+                </div>
+                
+                <div class="button-group">
+                    <button class="submit-btn" id="submitBtn" disabled>Submit Question</button>
+                    <button id="clearBtn">Clear</button>
+                    <button id="resetBtn">New Game</button>
+                </div>
+                
+                <div class="feedback" id="feedback">Select one or more animals and click Submit. Select only ONE animal to make your final guess.</div>
             </div>
-            
-            <div class="feedback" id="feedback">Select one or more animals and click Submit. Select only ONE animal to make your final guess.</div>
         </div>
     </div>
     </div>
