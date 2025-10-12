@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess Who - Animal Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+            background: #ffffff;
+            color: #111;
+            line-height: 1.55;
+            padding: 24px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            color: #111;
+        }
+        
+        .intro {
+            margin-bottom: 20px;
+            color: #374151;
+        }
+        
+        .appearances {
+            background: #f6f8fa;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .appearances h2 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: #111;
+        }
+        
+        .appearances ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .appearances li {
+            color: #374151;
+            font-size: 0.95rem;
+        }
+        
+        .score-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .score-label {
+            font-size: 0.95rem;
+            color: #374151;
+        }
+        
+        .score-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #111;
+        }
+        
+        .game-board {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .animal-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 12px;
+        }
+        
+        .animal-card {
+            background: white;
+            border: 2px solid #d1d5db;
+            border-radius: 4px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.15s;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .animal-card:hover:not(.eliminated) {
+            border-color: #9ca3af;
+            background: #fafafa;
+        }
+        
+        .animal-card.selected {
+            border: 3px solid #fbbf24;
+            background: #fffbeb;
+        }
+        
+        .animal-card.eliminated {
+            opacity: 0.25;
+            pointer-events: none;
+            background: #f3f4f6;
+        }
+        
+        .animal-emoji {
+            font-size: 1.8em;
+            line-height: 1;
+        }
+        
+        .animal-name {
+            font-size: 0.65em;
+            color: #374151;
+            margin-top: 4px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .controls {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .question-display {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            padding: 16px;
+            min-height: 60px;
+            margin-bottom: 16px;
+            font-size: 1rem;
+            color: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .button-group {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        
+        button {
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-weight: 500;
+            background: white;
+            color: #111;
+        }
+        
+        button:hover:not(:disabled) {
+            background: #f9fafb;
+            border-color: #9ca3af;
+        }
+        
+        button:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .submit-btn {
+            background: #111;
+            color: white;
+            border-color: #111;
+        }
+        
+        .submit-btn:hover:not(:disabled) {
+            background: #374151;
+            border-color: #374151;
+        }
+        
+        .feedback {
+            background: #f6f8fa;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            padding: 14px;
+            font-size: 0.95rem;
+            color: #374151;
+        }
+        
+        .feedback.success {
+            background: #f0fdf4;
+            border-color: #86efac;
+            color: #166534;
+        }
+        
+        .feedback.error {
+            background: #fef2f2;
+            border-color: #fca5a5;
+            color: #991b1b;
+        }
+
+        @media (max-width: 900px) {
+            .animal-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .animal-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Guess Who – Animal Edition</h1>
+        
+        <p class="intro">Choose animals by clicking on them, then submit your question. Select ONE animal to make a final guess, or multiple animals to ask a YES/NO question.</p>
+        
+        <div class="appearances">
+            <h2>Animal Distribution:</h2>
+            <ul>
+                <li><strong>8</strong> Dogs</li>
+                <li><strong>4</strong> Cats</li>
+                <li><strong>4</strong> Tigers</li>
+                <li><strong>4</strong> Lions</li>
+                <li><strong>4</strong> Elephants</li>
+                <li><strong>2</strong> Sharks</li>
+                <li><strong>2</strong> Zebras</li>
+                <li><strong>2</strong> Eagles</li>
+                <li><strong>1</strong> Frog</li>
+                <li><strong>1</strong> Snake</li>
+            </ul>
+        </div>
+        
+        <div class="score-section">
+            <span class="score-label">Questions Asked:</span>
+            <span class="score-value" id="score">0</span>
+        </div>
+        
+        <div class="game-board">
+            <div class="animal-grid" id="animalGrid"></div>
+        </div>
+        
+        <div class="controls">
+            <div class="question-display" id="questionDisplay">
+                Select animals to ask a question
+            </div>
+            
+            <div class="button-group">
+                <button class="submit-btn" id="submitBtn" disabled>Submit Question</button>
+                <button id="clearBtn">Clear</button>
+                <button id="resetBtn">New Game</button>
+            </div>
+            
+            <div class="feedback" id="feedback">Select one or more animals and click Submit. Select only ONE animal to make your final guess.</div>
+        </div>
+    </div>
+
+    <script>
+        const animalDistribution = [
+            { name: 'Dog', emoji: '🐶', count: 8 },
+            { name: 'Cat', emoji: '🐱', count: 4 },
+            { name: 'Tiger', emoji: '🐯', count: 4 },
+            { name: 'Lion', emoji: '🦁', count: 4 },
+            { name: 'Elephant', emoji: '🐘', count: 4 },
+            { name: 'Shark', emoji: '🦈', count: 2 },
+            { name: 'Zebra', emoji: '🦓', count: 2 },
+            { name: 'Eagle', emoji: '🦅', count: 2 },
+            { name: 'Frog', emoji: '🐸', count: 1 },
+            { name: 'Snake', emoji: '🐍', count: 1 }
+        ];
+
+        let animals = [];
+        let targetAnimal = null;
+        let selectedAnimals = new Set();
+        let eliminatedAnimals = new Set();
+        let questionCount = 0;
+
+        function createAnimalBoard() {
+            animals = [];
+            animalDistribution.forEach(animal => {
+                for (let i = 0; i < animal.count; i++) {
+                    animals.push({ ...animal });
+                }
+            });
+            // Shuffle the animals array
+            for (let i = animals.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [animals[i], animals[j]] = [animals[j], animals[i]];
+            }
+        }
+
+        function initGame() {
+            createAnimalBoard();
+            targetAnimal = animals[Math.floor(Math.random() * animals.length)];
+            selectedAnimals.clear();
+            eliminatedAnimals.clear();
+            questionCount = 0;
+            updateScore();
+            renderBoard();
+            updateQuestionDisplay();
+            updateFeedback('Game started! Try to find the animal by asking YES/NO questions.', '');
+            console.log('Target animal:', targetAnimal.name); // For debugging
+        }
+
+        function renderBoard() {
+            const grid = document.getElementById('animalGrid');
+            grid.innerHTML = '';
+            
+            animals.forEach((animal, index) => {
+                const card = document.createElement('div');
+                card.className = 'animal-card';
+                card.dataset.index = index;
+                
+                if (eliminatedAnimals.has(index)) {
+                    card.classList.add('eliminated');
+                }
+                
+                if (selectedAnimals.has(index)) {
+                    card.classList.add('selected');
+                }
+                
+                card.innerHTML = `
+                    <div class="animal-emoji">${animal.emoji}</div>
+                    <div class="animal-name">${animal.name}</div>
+                `;
+                
+                card.addEventListener('click', () => toggleAnimal(index));
+                grid.appendChild(card);
+            });
+        }
+
+        function toggleAnimal(index) {
+            if (eliminatedAnimals.has(index)) return;
+            
+            const clickedAnimal = animals[index];
+            const animalType = clickedAnimal.name;
+            
+            // Find all indices of this animal type
+            const sameTypeIndices = [];
+            animals.forEach((animal, idx) => {
+                if (animal.name === animalType && !eliminatedAnimals.has(idx)) {
+                    sameTypeIndices.push(idx);
+                }
+            });
+            
+            // Check if any of this type are currently selected
+            const anySelected = sameTypeIndices.some(idx => selectedAnimals.has(idx));
+            
+            if (anySelected) {
+                // Deselect all of this type
+                sameTypeIndices.forEach(idx => selectedAnimals.delete(idx));
+            } else {
+                // Select all of this type
+                sameTypeIndices.forEach(idx => selectedAnimals.add(idx));
+            }
+            
+            renderBoard();
+            updateQuestionDisplay();
+            document.getElementById('submitBtn').disabled = selectedAnimals.size === 0;
+        }
+
+        function updateQuestionDisplay() {
+            const display = document.getElementById('questionDisplay');
+            
+            if (selectedAnimals.size === 0) {
+                display.textContent = 'Select animals to ask a question';
+            } else {
+                const names = Array.from(selectedAnimals).map(i => animals[i].name);
+                const uniqueNames = [...new Set(names)];
+                display.textContent = `Is it ${uniqueNames.join(' OR ')}?`;
+            }
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = questionCount;
+        }
+
+        function updateFeedback(message, type = '') {
+            const feedback = document.getElementById('feedback');
+            feedback.textContent = message;
+            feedback.className = 'feedback' + (type ? ' ' + type : '');
+        }
+
+        function submitQuestion() {
+            if (selectedAnimals.size === 0) return;
+            
+            questionCount++;
+            updateScore();
+            
+            // Get unique animal types selected
+            const selectedNames = Array.from(selectedAnimals).map(i => animals[i].name);
+            const uniqueNames = [...new Set(selectedNames)];
+            
+            // Check if it's a final guess (only one animal type selected)
+            if (uniqueNames.length === 1) {
+                const guessedType = uniqueNames[0];
+                
+                if (guessedType === targetAnimal.name) {
+                    updateFeedback(`Correct! It was ${targetAnimal.name}! You found it in ${questionCount} questions.`, 'success');
+                    setTimeout(() => {
+                        if (confirm(`You won in ${questionCount} questions! Play again?`)) {
+                            initGame();
+                        }
+                    }, 1000);
+                } else {
+                    updateFeedback(`No, it's not ${guessedType}. Keep trying!`, 'error');
+                    // Eliminate all cards of the wrong type
+                    selectedAnimals.forEach(index => eliminatedAnimals.add(index));
+                }
+            } else {
+                // Multiple animal types selected - answer YES/NO
+                const isTargetIncluded = uniqueNames.includes(targetAnimal.name);
+                
+                if (isTargetIncluded) {
+                    updateFeedback(`YES, it is one of: ${uniqueNames.join(', ')}.`, 'success');
+                } else {
+                    updateFeedback(`NO, it's not any of: ${uniqueNames.join(', ')}.`, 'error');
+                    // Eliminate all selected cards
+                    selectedAnimals.forEach(index => eliminatedAnimals.add(index));
+                }
+            }
+            
+            selectedAnimals.clear();
+            renderBoard();
+            updateQuestionDisplay();
+            document.getElementById('submitBtn').disabled = true;
+        }
+
+        function clearSelection() {
+            selectedAnimals.clear();
+            renderBoard();
+            updateQuestionDisplay();
+            document.getElementById('submitBtn').disabled = true;
+        }
+
+        document.getElementById('submitBtn').addEventListener('click', submitQuestion);
+        document.getElementById('clearBtn').addEventListener('click', clearSelection);
+        document.getElementById('resetBtn').addEventListener('click', initGame);
+
+        initGame();
+    </script>
+</body>
+</html>
