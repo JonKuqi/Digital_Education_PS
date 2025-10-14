@@ -342,6 +342,86 @@
             border-color: #fca5a5;
             color: #991b1b;
         }
+        
+        .estimate-section {
+            background: transparent;
+            border: none;
+            padding: 16px 0;
+            margin-bottom: 24px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .estimate-text {
+            font-size: 1.1rem;
+            color: #374151;
+            line-height: 1.6;
+        }
+        
+        .estimate-text strong {
+            color: #111;
+        }
+        
+        .estimate-text a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        
+        .estimate-text a:hover {
+            text-decoration: underline;
+        }
+        
+        .estimate-input-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .estimate-input-group input {
+            width: 140px;
+            padding: 10px 14px;
+            font-size: 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 2px;
+            text-align: center;
+        }
+        
+        /* Remove number input arrows */
+        .estimate-input-group input::-webkit-outer-spin-button,
+        .estimate-input-group input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        .estimate-input-group input[type=number] {
+            -moz-appearance: textfield;
+        }
+        
+        .estimate-input-group button {
+            padding: 10px 18px;
+            font-size: 0.95rem;
+            background: #6b7280;
+            color: white;
+            border: none;
+            white-space: nowrap;
+        }
+        
+        .estimate-input-group button:hover:not(:disabled) {
+            background: #4b5563;
+        }
+        
+        @media (max-width: 900px) {
+            .estimate-section {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .estimate-input-group {
+                justify-content: flex-start;
+            }
+        }
 
         @media (max-width: 900px) {
             .animal-grid {
@@ -366,7 +446,8 @@
             <button onclick="startGame()">Start Game</button>
         </div>
     </div>
-    
+ 
+
     <!-- Timer Navbar -->
     <div class="navbar">
         <h1>Guess Who – Animal Edition</h1>
@@ -375,14 +456,13 @@
     
     <div class="main-content">
     <div class="container">
-            <p>As most of you are familiar with the board game <em>Guess Who</em>, today we're going to explore a slightly modified version of it.</p>
+    <p>As most of you are familiar with the board game <em>Guess Who</em>, today we're going to explore a slightly modified version of it.</p>
 
     <p>You will try to guess the animal chosen by asking <strong>YES/NO</strong> questions.</p>
 
-    <p>Be aware that some animals can appear <strong>multiple times</strong>, and you may group several different animals together in one question. However, you <strong>cannot</strong> ask questions that refer to abstract properties or affect multiple groups of animals at the same time.</p>
+    <p>Be aware that some animals can appear <strong>multiple times</strong>, and you may group several different animals together in one question.</p>
         <br>
-        <p>Choose animals by clicking on them, then submit your question. Select ONE animal to make a final guess, or multiple animals to ask a YES/NO question.</p>
-        <br>
+
         <div class="appearances">
             <h2>There are 32 animals:</h2>
             <ul>
@@ -398,7 +478,21 @@
                 <li><strong>1</strong> Snake</li>
             </ul>
         </div>
-        
+
+ 
+        <div class="estimate-section">
+            <div class="estimate-text">
+                <strong>Estimate the average number of YES/NO questions needed to find the animal, assuming you ask optimally.</strong><br>
+                <span style="font-size: 0.85rem;">(Hint: consider animal occurrence probabilities.)</span><br><br>
+                <span style="font-size: 0.85rem;">You can play the <strong>game</strong> below to get a better idea. You may need a calculator: <a href="https://www.tcsion.com/OnlineAssessment/ScientificCalculator/Calculator.html#nogo" target="_blank">Scientific Calculator</a></span>
+            </div>
+            <div class="estimate-input-group">
+                <input type="number" id="estimateInput" step="0.01" placeholder="0.00" min="0">
+                <button onclick="submitEstimate()">Submit</button>
+            </div>
+        </div>
+  <hr>
+        <br>
         <div class="score-section">
             <div class="score-item">
                 <span class="score-label">Round:</span>
@@ -504,7 +598,7 @@
         
         // Send data to Google Apps Script
         async function sendRoundData() {
-            const url = 'https://script.google.com/macros/s/AKfycbyDm1W1cGOowBG3qs2uf1QRUZBhZmaZMSpsNX3E5Q4KqU0a1hB9B06p8feNu_rVJQL3/exec';
+            const url = 'https://script.google.com/macros/s/AKfycbxWUOZIgDQuuQecvT9oCJFtDaJshExJ0Siv7KWcylwIxCnd3Rr4MZa0tfpmO08gflY/exec?sheet=Rounds';
             
             const data = {
                 user: userId,
@@ -521,9 +615,44 @@
                     },
                     body: JSON.stringify(data)
                 });
-                console.log('Data sent successfully:', data);
+                console.log('Round data sent successfully:', data);
             } catch (error) {
-                console.error('Error sending data:', error);
+                console.error('Error sending round data:', error);
+            }
+        }
+        
+        // Submit estimate to Google Apps Script
+        async function submitEstimate() {
+            const input = document.getElementById('estimateInput');
+            const value = input.value.trim();
+            
+            if (!value || isNaN(value) || parseFloat(value) < 0) {
+                alert('Please enter a valid number');
+                return;
+            }
+            
+            const url = 'https://script.google.com/macros/s/AKfycbxWUOZIgDQuuQecvT9oCJFtDaJshExJ0Siv7KWcylwIxCnd3Rr4MZa0tfpmO08gflY/exec?sheet=Submissions';
+            
+            const data = {
+                user: userId,
+                result: value
+            };
+            
+            try {
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                alert('Estimate submitted successfully!');
+                input.value = '';
+                console.log('Estimate sent successfully:', data);
+            } catch (error) {
+                console.error('Error sending estimate:', error);
+                alert('Error submitting estimate. Please try again.');
             }
         }
 
