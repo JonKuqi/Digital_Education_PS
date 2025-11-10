@@ -470,8 +470,8 @@
     <div class="modal active" id="userModal">
         <div class="modal-content">
             <h2>Welcome to Guess Who!</h2>
-            <p style="margin-bottom: 16px; color: #374151;">Please enter your number identifier:</p>
-            <input type="text" id="userIdInput" placeholder="Enter your number identifier" autofocus>
+            <p style="margin-bottom: 16px; color: #374151;">Please enter your email:</p>
+            <input type="email" id="userIdInput" placeholder="Enter your email" autofocus>
             <button onclick="startGame()">Start Game</button>
         </div>
     </div>
@@ -554,7 +554,7 @@
         // Game state variables
         let userId = null;
         let timerInterval = null;
-        let timeRemaining = 480; // 10 minutes in seconds
+        let timeRemaining = 540; // 9 minutes in seconds
         let roundCount = 0;
         let questionsAsked = [];
         let estimateSubmissionCount = 0; // Track estimate submissions
@@ -620,7 +620,7 @@
         function startGame() {
             const input = document.getElementById('userIdInput');
             if (!input.value.trim()) {
-                alert('Please enter your number identifier');
+                alert('Please enter your email');
                 return;
             }
             userId = input.value.trim();
