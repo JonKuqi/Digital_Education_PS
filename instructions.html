@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess Who - Animal Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+            background: #ffffff;
+            color: #111;
+            line-height: 1.55;
+            padding: 0;
+        }
+        
+        .navbar {
+            background: #ffffff;
+            color: #111;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #d1d5db;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar h1 {
+            font-size: 1.25rem;
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .main-content {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 60px);
+        }
+        
+        .video-container {
+            width: 70vw;
+            max-width: 1400px;
+            margin: 0 auto 30px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #000;
+        }
+        
+        .video-container video {
+            width: 100%;
+            display: block;
+        }
+        
+        .continue-btn {
+            padding: 14px 32px;
+            font-size: 1.1rem;
+            background: #111;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.15s;
+        }
+        
+        .continue-btn:hover {
+            background: #374151;
+            transform: scale(1.02);
+        }
+        
+        .continue-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            width: 90vw;
+            max-width: 1400px;
+            margin: 0 auto;
+            margin-right: 28vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>Guess Who – Animal Edition</h1>
+    </div>
+    
+    <div class="main-content">
+        <div class="video-container">
+            <video controls>
+                <source src="video_demo.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        
+        <div class="button-container">
+            <button class="continue-btn" onclick="window.location.href='index.html'">Continue</button>
+        </div>
+    </div>
+</body>
+</html>
