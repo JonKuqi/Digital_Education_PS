@@ -705,6 +705,15 @@
                 return;
             }
             
+            // Correct entropy values for each distribution
+            const correctAnswers = [3.0625, 3.111, 2.792];
+            const currentCorrectAnswer = correctAnswers[estimateSubmissionCount];
+            const userAnswer = parseFloat(value);
+            const tolerance = 0.02;
+            
+            // Check if answer is correct (within tolerance)
+            const isCorrect = Math.abs(userAnswer - currentCorrectAnswer) <= tolerance;
+            
             // Disable button and show submitting state
             submitButton.disabled = true;
             submitButton.textContent = 'Submitting...';
@@ -739,8 +748,8 @@
             // Reset the game with new distribution
             initGame();
             
-            // Show success modal instead of alert
-            showSuccessModal(estimateSubmissionCount);
+            // Show success modal with feedback
+            showSuccessModal(estimateSubmissionCount, isCorrect);
             
             // Reset input and button
             input.value = '';
@@ -749,25 +758,38 @@
         }
         
         // Show success modal with message
-        function showSuccessModal(submissionNumber) {
+        function showSuccessModal(submissionNumber, isCorrect) {
             const modal = document.getElementById('successModal');
             const title = document.getElementById('successTitle');
             const message = document.getElementById('successMessage');
+            const icon = document.querySelector('.success-icon');
             
-            if (submissionNumber < 3) {
-                title.textContent = `Estimate ${submissionNumber} Submitted!`;
-                message.textContent = 'The animal distribution has changed. Please estimate again with the new distribution.';
+            if (isCorrect) {
+                icon.textContent = '✓';
+                title.textContent = 'You got it!';
+                title.style.color = '#059669';
+                if (submissionNumber < 3) {
+                    message.textContent = 'Correct! The animal distribution has changed. Please estimate again with the new distribution.';
+                } else {
+                    message.textContent = 'Correct! You have completed all 3 estimates. Continue playing with the current distribution.';
+                }
             } else {
-                title.textContent = 'All Estimates Complete!';
-                message.textContent = 'You have completed all 3 estimates. Continue playing with the current distribution.';
+                icon.textContent = '✗';
+                title.textContent = 'Incorrect';
+                title.style.color = '#dc2626';
+                if (submissionNumber < 3) {
+                    message.textContent = 'Try to calculate again. The animal distribution has changed. Please estimate with the new distribution.';
+                } else {
+                    message.textContent = 'Try to calculate again. You have completed all 3 estimates. Continue playing with the current distribution.';
+                }
             }
             
             modal.classList.add('active');
             
-            // Auto-hide after 2 seconds
+            // Auto-hide after 3 seconds
             setTimeout(() => {
                 modal.classList.remove('active');
-            }, 2000);
+            }, 3000);
         }
         
         // Update the displayed animal appearances based on current distribution
