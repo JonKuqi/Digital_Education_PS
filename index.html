@@ -466,13 +466,11 @@
     </style>
 </head>
 <body>
-    <!-- User ID Modal -->
-    <div class="modal active" id="userModal">
+    <!-- Error Modal for Missing UID -->
+    <div class="modal" id="errorModal">
         <div class="modal-content">
-            <h2>Welcome to Guess Who!</h2>
-            <p style="margin-bottom: 16px; color: #374151;">Please enter your email:</p>
-            <input type="email" id="userIdInput" placeholder="Enter your email" autofocus>
-            <button onclick="startGame()">Start Game</button>
+            <h2 style="color: #dc2626;">Missing User Identification</h2>
+            <p style="margin-bottom: 16px; color: #374151;">Please go back on Moodle and click the link again without opening a new window.</p>
         </div>
     </div>
     
@@ -616,22 +614,31 @@
         let eliminatedAnimals = new Set();
         let questionCount = 0;
 
-        // Start game after user enters ID
-        function startGame() {
-            const input = document.getElementById('userIdInput');
-            if (!input.value.trim()) {
-                alert('Please enter your email');
+        // Initialize game on page load
+        function initializeApp() {
+            // Get the uid parameter from the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const uid = urlParams.get('uid');
+            
+            if (!uid) {
+                // Show error modal if uid is missing
+                document.getElementById('errorModal').classList.add('active');
                 return;
             }
-            userId = input.value.trim();
-            document.getElementById('userModal').classList.remove('active');
+            
+            // Set userId from URL parameter
+            userId = uid;
             
             // Initialize the animal appearances display
             updateAnimalAppearances();
             
+            // Start the timer and game
             startTimer();
             initGame();
         }
+        
+        // Call initialization when page loads
+        window.addEventListener('DOMContentLoaded', initializeApp);
         
         // Timer functions
         function startTimer() {
@@ -981,8 +988,6 @@
         document.getElementById('submitBtn').addEventListener('click', submitQuestion);
         document.getElementById('clearBtn').addEventListener('click', clearSelection);
         document.getElementById('resetBtn').addEventListener('click', initGame);
-
-        // Don't auto-start the game - wait for user ID input
     </script>
 </body>
 </html>
